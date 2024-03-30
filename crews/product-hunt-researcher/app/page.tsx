@@ -2,9 +2,8 @@
 // we don't need to pass it down to <Chat> over props — chat.ts can directly import
 // that action.
 
-import { handler } from './action';
-import { Chat } from './chat';
+import { Chat } from "./chat";
 
 export default function Page() {
-  return <Chat handler={handler} />;
+  return <Chat />;
 }

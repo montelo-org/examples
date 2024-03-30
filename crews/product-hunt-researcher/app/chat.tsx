@@ -3,7 +3,7 @@
 import { useChat } from "ai/react";
 import { useState } from "react";
 
-export function Chat({ handler }: { handler: any }) {
+export function Chat() {
   const { messages, input, handleInputChange, handleSubmit } = useChat({
     api: "/api/crews",
     initialMessages: [

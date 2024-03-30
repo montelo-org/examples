@@ -1,5 +1,6 @@
 import { experimental_StreamData, OpenAIStream, StreamingTextResponse, Tool, ToolCallPayload } from "ai";
 import { Agent, Crew, Montelo, Task, Tools } from "montelo";
+import OpenAI from "openai";
 import { ProductFinderTool } from "./tools/ProductFinderTool";
 
 const montelo = new Montelo();
@@ -8,15 +9,17 @@ const montelo = new Montelo();
 // export const runtime = "edge";
 
 export async function POST(req: Request) {
-  const { messages } = await req.json();
-  console.log("messages", messages);
+  const request = await req.json();
+  const messages = request.messages as OpenAI.ChatCompletionMessageParam[];
+  const category = messages.reverse().find(({ role }) => role === "user")?.content || "AI";
+  console.log("category", category);
 
   /**
    * Agents
    */
   const productFinder = new Agent({
     name: "Product Finder",
-    role: "You're an expert product finder. You help people find the hottest new products on Product Hunt.",
+    role: "You're an expert product finder. You help people find the hottest new products on Product Hunt to do with {category}.",
     tools: [ProductFinderTool],
     model: "gpt-3.5-turbo",
   });
@@ -40,7 +43,7 @@ export async function POST(req: Request) {
    */
   const findProductsTask = new Task({
     name: "Find Products",
-    description: "Find a list of the top 5 hot products launching today on Product Hunt.",
+    description: "Find a list of the top 5 hot products launching today about {category} on Product Hunt.",
     expectedOutput: "a list of 5 hot new products",
     agent: productFinder,
   });
@@ -67,9 +70,14 @@ export async function POST(req: Request) {
     agents: [productFinder, productResearcher, writer],
     tasks: [findProductsTask, researchProductsTask, writePostsTask],
     process: "sequential",
+    stepCallback: async (output: string, agentName?: string) => {
+      // TODO: show output to user
+      console.log("[Agent - ", agentName, "] Output:", output.slice(0, 20) + (output.length > 20 ? "..." : ""));
+    },
   });
-  const { result } = await crew.start({ monteloClient: montelo });
+  const { result } = await crew.start({ monteloClient: montelo, promptInputs: { category } });
 
+  // Format: { twitter: string, blog: string}
   const response = typeof result === "string" ? JSON.parse(result) : result;
   return new Response(response, { status: 200 });
 
