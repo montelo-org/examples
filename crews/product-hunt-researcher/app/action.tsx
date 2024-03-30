@@ -1,103 +1,113 @@
-"use server";
+import "server-only";
 
-import { experimental_StreamData, experimental_StreamingReactResponse, Message, OpenAIStream } from "ai";
-import { experimental_buildOpenAIMessages } from "ai/prompts";
-import { Montelo } from "montelo";
-import { ChatCompletionCreateParams } from "openai/resources/chat";
+import { createAI, createStreamableValue } from "ai/rsc";
+import { Agent, Crew, Montelo, Task, Tools } from "montelo";
+import { ProductFinderTool } from "@/app/ProductFinderTool";
 
-const functions: ChatCompletionCreateParams.Function[] = [
-  {
-    name: "get_current_weather",
-    description: "Get the current weather",
-    parameters: {
-      type: "object",
-      properties: {
-        location: {
-          type: "string",
-          description: "The city and state, e.g. San Francisco, CA",
-        },
-        format: {
-          type: "string",
-          enum: ["celsius", "fahrenheit"],
-          description: "The temperature unit to use. Infer this from the users location.",
-        },
-      },
-      required: ["location", "format"],
+const montelo = new Montelo();
+
+async function submitCategory(category: string) {
+  "use server";
+
+  const reply = createStreamableValue({
+    role: "assistant",
+    content: "Sure! Give me a second while I assemble the Crew.",
+  });
+
+  /**
+   * Agents
+   */
+  const productFinder = new Agent({
+    name: "Product Finder",
+    role: "You're an expert product finder. You help people find the hottest new products on Product Hunt to do with {category}.",
+    tools: [ProductFinderTool],
+    model: "gpt-3.5-turbo",
+  });
+
+  const PerplexitySearchTool = Tools.PerplexitySearchTool({ model: "sonar-small-online" });
+  const productResearcher = new Agent({
+    name: "Product Researcher",
+    role: "You're a product researcher. you find more information about ALL the products given to you and summarize them using Perplexity.",
+    tools: [PerplexitySearchTool],
+    model: "gpt-3.5-turbo",
+  });
+
+  const writer = new Agent({
+    name: "Writer",
+    role: "You're a passionate writer. You write engaging and informative posts in the format given to you.",
+    model: "gpt-3.5-turbo",
+  });
+
+  /**
+   * Tasks
+   */
+  const findProductsTask = new Task({
+    name: "Find Products",
+    description: "Find a list of the top 5 hot products launching today about {category} on Product Hunt.",
+    expectedOutput: "a list of 5 hot new products",
+    agent: productFinder,
+  });
+  const researchProductsTask = new Task({
+    name: "Research Products",
+    description: "Research all the products found and summarize them.",
+    expectedOutput: "A list of summaries of what each product does",
+    agent: productResearcher,
+  });
+  const writePostsTask = new Task({
+    name: "Write Posts",
+    description:
+      "Write 2 engaging and informative posts about the hottest products launching today. One short post for Twitter and one long markdown post for a blog.",
+    expectedOutput:
+      "1. A short post for Twitter\n2. Long post for a blog (in markdown)\nFormatted in this JSON format: { twitter: '...', blog: '...' }",
+    agent: writer,
+  });
+
+  /**
+   * Crew
+   */
+  const crew = new Crew({
+    name: "Product Hunt Crew",
+    agents: [productFinder, productResearcher, writer],
+    tasks: [findProductsTask, researchProductsTask, writePostsTask],
+    process: "sequential",
+    stepCallback: async (output: string, agentName?: string) => {
+      reply.update({
+        role: agentName || "assistant",
+        content: output,
+      });
     },
+  });
+
+  crew.start({ monteloClient: montelo, promptInputs: { category } }).then((result) => {
+    reply.done({
+      role: "final",
+      content: result.result,
+    });
+  });
+
+  return reply.value;
+}
+
+const initialAIState: {
+  role: string;
+  content: string;
+}[] = [
+  {
+    role: "assistant",
+    content:
+      "Hey there! I'm a Crew of Agents developed by MonteloAI. I can help you research the top products on Product Hunt today. Simply select a category, and I'll write a Tweet and a short article for you!",
   },
 ];
 
-export async function handler({ messages }: { messages: Message[] }) {
-  const data = new experimental_StreamData();
+const initialUIState: {
+  id: number;
+  content: string;
+}[] = [];
 
-  const { openai } = new Montelo();
-
-  const response = await openai.chat.completions.create({
-    model: "gpt-3.5-turbo",
-    stream: true,
-    messages: experimental_buildOpenAIMessages(messages),
-    functions,
-  });
-
-  const stream = OpenAIStream(response, {
-    onFinal() {
-      data.close();
-    },
-    async experimental_onFunctionCall({ name, arguments: args }) {
-      switch (name) {
-        case "get_current_weather": {
-          data.append({
-            type: "weather",
-            location: args.location as string,
-            format: args.format as string,
-            temperature: Math.floor(Math.random() * 60) - 20,
-          });
-          return;
-        }
-      }
-
-      return undefined;
-    },
-    experimental_streamData: true,
-  });
-
-  return new experimental_StreamingReactResponse(stream, {
-    data,
-    ui({ content, data }) {
-      if (data?.[0] != null) {
-        const value = data[0] as any;
-
-        switch (value.type) {
-          case "weather": {
-            return (
-              <div className="bg-blue-500 text-white p-6 rounded-lg shadow-md">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-2xl font-bold">{value.location}</h2>
-                  <svg
-                    className=" w-8 h-8"
-                    fill="none"
-                    height="24"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                    width="24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />
-                  </svg>
-                </div>
-                <p className="text-4xl font-semibold mt-2">
-                  {value.temperature}° {value.format}
-                </p>
-              </div>
-            );
-          }
-        }
-      }
-
-      return <div>{content}</div>;
-    },
-  });
-}
+export const AI = createAI({
+  actions: {
+    submitCategory,
+  },
+  initialUIState,
+  initialAIState,
+});

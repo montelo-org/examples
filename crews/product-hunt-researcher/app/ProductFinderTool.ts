@@ -79,8 +79,7 @@ const findProducts = async (): Promise<string> => {
     const contentType = res.headers.get("content-type");
     const data = contentType?.includes("application/json") ? await res.json() : await res.text();
 
-    const formattedPage = formatHTML(data);
-    return formattedPage;
+    return formatHTML(data);
   } catch (err) {
     console.error(err);
     return "An error occurred while scraping the website.";
