@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #404040;
+}
+
+/* hide scrollbar */
+html {
+    overflow: scroll;
+    overflow-x: hidden;
+}
+
+::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+}
+
+.grainy-background {
+    background-image: url("./grainy-background.png");
+    background-color: #8642bd;
+    background-attachment: fixed;
+}
+
+.grainy-paper {
+    background-image: url("./grainy-background.png");
+    background-color: #f09092;
+    border-radius: 16px;
+    padding: 1rem;
+    box-shadow: 0px 12px 16px 8px rgba(0, 0, 0, 0.5);
+    overflow: auto;
+}
