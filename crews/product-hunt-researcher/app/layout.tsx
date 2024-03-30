@@ -15,7 +15,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en">
       <body className={`${inter.className} grainy-background w-screen h-screen`}>
         <div className={"grainy-paper w-[45%] h-[90%] mx-auto rounded-lg"}>
-          <div className={"flex flex-row justify-between items-center"}>
+          <div className={"flex justify-between"}>
             <a href={"https://montelo.ai"} target={"_blank"} rel="noopener noreferrer">
               <img src={"/LightModeLogo.svg"} alt={"MonteloAI Logo"} className={"h-7"} />
             </a>
