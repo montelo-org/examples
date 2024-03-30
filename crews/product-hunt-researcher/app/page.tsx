@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { handler } from "./action";
 import { useChat } from "ai/react";
 
 export default function Page() {
@@ -63,7 +62,7 @@ export default function Page() {
                   <button
                     key={option}
                     onClick={() => handleCategorySelect(option)}
-                    className={`px-4 py-2 bg-purple-300 bg-opacity-50 rounded-lg shadow-md hover:bg-purple-400 hover:bg-opacity-50 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 transition-colors duration-200 ease-in-out font-medium ${selectedCategory === option ? "bg-purple-400 bg-opacity-50 shadow-lg" : ""}`}
+                    className={`px-4 py-2 bg-gray-50 bg-opacity-50 rounded-lg shadow-md hover:bg-gray-100 hover:bg-opacity-50 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-gray-200 focus:ring-opacity-50 transition-colors duration-200 ease-in-out font-medium ${selectedCategory === option ? "bg-purple-400 bg-opacity-50 shadow-lg" : ""}`}
                   >
                     {option}
                   </button>
