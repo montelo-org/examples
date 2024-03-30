@@ -5,7 +5,7 @@ import { useState } from "react";
 
 export function Chat({ handler }: { handler: any }) {
   const { messages, input, handleInputChange, handleSubmit } = useChat({
-    api: handler,
+    api: "/api/crews",
     initialMessages: [
       {
         id: "0",
