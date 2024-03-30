@@ -1,5 +1,7 @@
 import { Agent, Crew, Montelo, Task, Tools } from "montelo";
 import OpenAI from "openai";
+// @ts-ignore
+import dJSON from "dirty-json";
 import { ProductFinderTool } from "./tools/ProductFinderTool";
 
 const montelo = new Montelo();
@@ -74,7 +76,7 @@ export async function POST(req: Request) {
   const { result } = await crew.start({ monteloClient: montelo, promptInputs: { category } });
 
   // Format: { twitter: string, blog: string}
-  const response = typeof result === "string" ? JSON.parse(result) : result;
+  const response = typeof result === "string" ? dJSON.parse(result) : result;
   return new Response(response, { status: 200 });
 
   // const data = new experimental_StreamData();

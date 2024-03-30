@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "ai": "latest",
+    "dirty-json": "^0.9.2",
     "montelo": "^1.1.80",
     "next": "14.1.1",
     "openai": "4.29.0",
