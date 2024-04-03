@@ -48,8 +48,7 @@ export const ApiKeysState: FC<{ onBack: () => void }> = ({ onBack }) => {
       </form>
 
       <p>Your API key never gets sent to our servers. You can check the full source code for Cody&nbsp;
-        {/*TODO add source code link*/}
-        <a href="" target={"_blank"} rel="noopener noreferrer"
+        <a href={"https://github.com/montelo-org/examples/tree/main/cody"} target={"_blank"} rel="noopener noreferrer"
            className={"cursor-pointer text-blue-700 underline"}>here</a>.
       </p>
     </div>

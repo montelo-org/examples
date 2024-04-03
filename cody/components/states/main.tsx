@@ -24,14 +24,14 @@ export const MainState = () => {
 
     return (
       <ReactMarkdown
-        className={"text-xs"}
+        className={"text-sm"}
         components={{
           code(props) {
             const { children, className, ...rest } = props;
             const match = /language-(\w+)/.exec(className || "");
 
             const CodeSnippet = ({ match }: { match: RegExpExecArray }) => (
-              <div className={"flex flex-col w-full h-full relative"}>
+              <div className={"flex flex-col w-full h-full relative text-xs"}>
                 <div className={"self-end absolute top-3 right-[6px] text-white text-xs opacity-50"}>
                   {copiedText === children ? (
                     <ClipboardCheck className={"cursor-pointer"} />
