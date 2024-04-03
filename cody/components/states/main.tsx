@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import { readStreamableValue, useActions, useUIState } from "ai/rsc";
 import type { AI } from "@/app/action";
 import { useLocalStorage } from "@uidotdev/usehooks";
+import { SendHorizontal } from "@/components/icons/send-horizontal";
 
 export const MainState = () => {
   const [localKey] = useLocalStorage<string>("openai-api-key", "");
@@ -12,6 +13,7 @@ export const MainState = () => {
 
   const IconMap: Record<string, string> = {
     assistant: "🤖",
+    user: "👤",
   };
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
@@ -57,6 +59,7 @@ export const MainState = () => {
       </ul>
 
       <form
+        className={"flex flex-row gap-2"}
         onSubmit={handleSubmit}>
         <textarea
           className="border-gray-300 rounded-lg shadow-xl w-full p-4 bg-opacity-80 bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:border-transparent transition-colors duration-200 ease-in-out"
@@ -65,6 +68,7 @@ export const MainState = () => {
           onChange={(event) => setInputMessage(event.target.value)}
           autoFocus
         />
+        <button type={"submit"}><SendHorizontal /></button>
       </form>
     </div>
   );

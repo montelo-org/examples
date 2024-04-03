@@ -36,7 +36,7 @@ export default function Page() {
           </div>
         </div>
       </div>
-      <div className={"p-4 h-[94%]"}>
+      <div className={"p-4 h-[94%]"} suppressHydrationWarning={true}>
         {StateMap[appState]}
       </div>
     </div>

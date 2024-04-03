@@ -24,7 +24,7 @@ export const ApiKeysState: FC<{ onBack: () => void }> = ({ onBack }) => {
   }, []);
 
   return (
-    <div className="flex flex-col w-[80%] mx-auto h-full gap-4" suppressHydrationWarning={true}>
+    <div className="flex flex-col w-[80%] mx-auto h-full gap-4">
       <a onClick={onBack} className={"w-fit cursor-pointer hover:text-gray-500"}>
         Back
       </a>
