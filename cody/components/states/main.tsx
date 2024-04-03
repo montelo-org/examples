@@ -24,7 +24,7 @@ export const MainState = () => {
 
     return (
       <ReactMarkdown
-        className={"text-sm"}
+        className={"text-xs"}
         components={{
           code(props) {
             const { children, className, ...rest } = props;
