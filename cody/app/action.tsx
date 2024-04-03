@@ -3,6 +3,8 @@ import "server-only";
 import { createAI, createStreamableValue } from "ai/rsc";
 import { Agent, Crew, Montelo, Task } from "montelo";
 
+export const maxDuration = 300;
+
 async function submitMessage({ message, openaiKey, model }: { message: string; openaiKey: string; model: string }) {
   "use server";
 

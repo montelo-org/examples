@@ -98,7 +98,7 @@ function Page() {
           }}
           disabled={isTextAreaDisabled}
         />
-        <div className={"p-2 h-full max-w-full sm:max-w-[50%] overflow-auto flex-1"} suppressHydrationWarning={true}>
+        <div className={"px-2 py-4 h-full max-w-full sm:max-w-[50%] overflow-auto flex-1"} suppressHydrationWarning={true}>
           {StateMap[appState]}
         </div>
       </div>
