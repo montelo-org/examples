@@ -73,7 +73,7 @@ export const MainState = () => {
   const AssistantMessage = (m: { content: string }) => (
     <li className={"flex justify-start items-center gap-1"}>
       <p className={"text-2xl -ml-[26px]"}>{IconMap["assistant"]}</p>
-      <div className="p-4 rounded-xl bg-gray-50 bg-opacity-50 shadow max-w-full flex-1">
+      <div className="p-4 rounded-xl bg-gray-50 bg-opacity-55 shadow max-w-full flex-1">
         <Markdown>{m.content}</Markdown>
       </div>
     </li>
@@ -81,7 +81,7 @@ export const MainState = () => {
 
   const UserMessage = (m: { content: string }) => (
     <li className={"flex justify-end gap-1 items-center"}>
-      <div className="p-4 rounded-xl bg-gray-50 bg-opacity-50 shadow">
+      <div className="p-4 rounded-xl bg-gray-50 bg-opacity-30 shadow">
         <ReactMarkdown>{m.content}</ReactMarkdown>
       </div>
       <p className={"text-2xl -mr-[26px]"}>{IconMap["user"]}</p>

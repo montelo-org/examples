@@ -14,6 +14,7 @@ export default function Page() {
   const [_messages, setMessages] = useUIState<typeof AI>();
   const [inputMessage, setInputMessage] = useState<string>("");
   const [isChatting, setIsChatting] = useState<boolean>(false);
+  const [selectedModel, setSelectedModel] = useState<string>("gpt-3.5-turbo-0125");
 
   const [appState, setAppState] = useState<"main" | "apikeys">("main");
   const setMainState = () => setAppState("main");
@@ -37,7 +38,7 @@ export default function Page() {
       },
     ]);
 
-    const responseStream = await submitMessage(inputMessage, localKey);
+    const responseStream = await submitMessage({ message: inputMessage, openaiKey: localKey, model: selectedModel });
     const streamableValue = readStreamableValue(responseStream);
 
     for await (const v of streamableValue) {
@@ -61,8 +62,18 @@ export default function Page() {
           <p>MonteloAI</p>
         </a>
         <p className="text-center">Cody</p>
-        <div className={"flex gap-2 justify-end"}>
-          {/*<HistoryIcon className={"cursor-pointer hover:text-gray-500"} />*/}
+        <div className={"flex gap-4 justify-end items-center"}>
+          <div className="max-w-sm">
+            <select
+              value={selectedModel}
+              onChange={(event) => setSelectedModel(event.target.value)}
+              className="bg-transparent p-1 border border-gray-300 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full"
+            >
+              <option value="gpt-3.5-turbo-0125">GPT-3.5-Turbo</option>
+              <option value="gpt-4-0125-preview">GPT-4</option>
+            </select>
+          </div>
+
           <div
             className={"flex flex-row gap-1 cursor-pointer hover:text-gray-500 items-center text-sm italic"}
             onClick={setApiKeysState}
