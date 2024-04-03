@@ -37,8 +37,6 @@ export default function Page() {
     }
   };
 
-  console.log(history);
-
   const IconMap: Record<string, string> = {
     assistant: "🤖",
     "Product Finder": "🔍",
@@ -74,7 +72,9 @@ export default function Page() {
           <React.Fragment key={index}>
             <li key={index} className={"flex justify-start"}>
               <div className="flex flex-col gap-1">
-                <p className={"text-2xl"}>{`${IconMap[m.role]} ${(m.role !== "final" && m.role !== "assistant") ? m.role : ""}`}</p>
+                <p
+                  className={"text-2xl"}
+                >{`${IconMap[m.role]} ${m.role !== "final" && m.role !== "assistant" ? m.role : ""}`}</p>
                 {m.role !== "final" ? (
                   <div className="p-4 rounded-xl bg-gray-50 bg-opacity-50 shadow-2xl">
                     <ReactMarkdown>{m.content}</ReactMarkdown>
