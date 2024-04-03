@@ -34,6 +34,7 @@ export const MainState = () => {
       const streamableValue = readStreamableValue(responseStream);
 
       for await (const v of streamableValue) {
+        console.log(v);
         if (!v) return;
         setMessages((currentMessages) => [
           ...currentMessages,
@@ -43,11 +44,14 @@ export const MainState = () => {
     };
 
     const Markdown: FC<{ children: string; }> = ({ children }) => {
-      const replaced = children.replaceAll("```", "~~~");
+      // Replace triple backticks with tildes and handle new lines
+      let replaced = children.replaceAll("```", "~~~");
+      // Replace single new lines with two spaces followed by a new line character
+      replaced = replaced.replace(/(?<!\n)\n(?!\n)/g, "  \n");
 
       return <ReactMarkdown className={"text-sm"} components={{
         code(props) {
-          const { children, className, node, ...rest } = props;
+          const { children, className, ...rest } = props;
           const match = /language-(\w+)/.exec(className || "");
 
           const CodeSnippet = ({ match }: { match: RegExpExecArray }) => (
@@ -57,12 +61,12 @@ export const MainState = () => {
                   void copyToClipboard(children as string);
                 }} />}
               </div>
-              {/* @ts-ignore */}
+              {/*@ts-ignore*/}
               <SyntaxHighlighter
                 {...rest}
                 PreTag="div"
                 children={String(children).replace(/\n$/, "")}
-                language={match[1]}
+                language={match ? match[1] : ""}
                 style={oneDark}
               />
             </div>
@@ -78,9 +82,9 @@ export const MainState = () => {
             )
           );
         },
-      }
-      }>{replaced}</ReactMarkdown>;
+      }}>{replaced}</ReactMarkdown>;
     };
+
 
     const AssistantMessage = (m: { content: string }) => (
       <li className={"flex justify-start"}>

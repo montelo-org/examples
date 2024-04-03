@@ -75,6 +75,7 @@ async function submitMessage(message: string, openaiKey: string) {
     tasks: [planTask, codeTask, reviewTask, finalAnswerTask],
     process: "sequential",
     stepCallback: async (output: string, agentName?: string) => {
+      console.log(output);
       reply.update({
         role: "assistant",
         content: output,
