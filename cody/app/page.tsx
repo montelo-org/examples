@@ -47,9 +47,7 @@ export default function Page() {
 
   return (
     <div className={"grainy-paper w-[80%] h-[90%] mx-auto rounded-lg flex flex-col"}>
-      <div
-        className={"grainy-header p-4 flex justify-between items-center rounded-t-xl border-b-[1px] border-gray-400"}
-      >
+      <div className={"grainy-header w-full p-4 grid grid-cols-3 rounded-t-xl border-b-[1px] border-gray-400"}>
         <a
           href={"https://montelo.ai"}
           target={"_blank"}
@@ -59,11 +57,11 @@ export default function Page() {
           <img src={"/MonteloLogo.svg"} alt={"MonteloAI Logo"} className={"h-6"} />
           <p>MonteloAI</p>
         </a>
-        <p>Cody</p>
-        <div className={"flex gap-2"}>
+        <p className="text-center">Cody</p>
+        <div className={"flex gap-2 justify-end"}>
           {/*<HistoryIcon className={"cursor-pointer hover:text-gray-500"} />*/}
           <div
-            className={"flex flex-row gap-1 cursor-pointer hover:text-gray-500 items-center"}
+            className={"flex flex-row gap-1 cursor-pointer hover:text-gray-500 items-center text-sm italic"}
             onClick={setApiKeysState}
           >
             {localKey === "" ? <p className={"text-sm italic"}>Set API Key First</p> : null}
@@ -71,9 +69,9 @@ export default function Page() {
           </div>
         </div>
       </div>
-      <div className={"flex h-full overflow-auto"}>
+      <div className={"flex h-full overflow-auto flex-col-reverse sm:flex-row"}>
         <textarea
-          className="flex-1 max-w-[50%] p-4 bg-opacity-80 bg-gray-200 focus:outline-none focus:border-transparent rounded-bl-xl"
+          className="flex-1 max-w-full sm:max-w-[50%] p-4 bg-opacity-80 bg-gray-200 focus:outline-none focus:border-transparent rounded-bl-xl"
           value={inputMessage}
           placeholder="Ask Cody anything..."
           onChange={(event) => setInputMessage(event.target.value)}
@@ -84,7 +82,7 @@ export default function Page() {
             }
           }}
         />
-        <div className={"p-4 h-full max-w-[50%] overflow-auto flex-1"} suppressHydrationWarning={true}>
+        <div className={"p-4 h-full max-w-full sm:max-w-[50%] overflow-auto flex-1"} suppressHydrationWarning={true}>
           {StateMap[appState]}
         </div>
       </div>
