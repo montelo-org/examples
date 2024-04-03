@@ -52,7 +52,7 @@ export default function Page() {
           href={"https://montelo.ai"}
           target={"_blank"}
           rel="noopener noreferrer"
-          className={"flex flex-row gap-1 items-center"}
+          className={"flex w-fit flex-row gap-1 items-center hover:opacity-85"}
         >
           <img src={"/MonteloLogo.svg"} alt={"MonteloAI Logo"} className={"h-6"} />
           <p>MonteloAI</p>
