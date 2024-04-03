@@ -3,7 +3,7 @@ import "server-only";
 import { createAI, createStreamableValue } from "ai/rsc";
 import { Agent, Crew, Montelo, Task } from "montelo";
 
-async function submitMessage(message: string, openaiKey: string) {
+async function submitMessage({ message, openaiKey, model }: { message: string; openaiKey: string; model: string }) {
   "use server";
 
   const montelo = new Montelo({
@@ -29,9 +29,9 @@ async function submitMessage(message: string, openaiKey: string) {
   /**
    * Agents
    */
-  const planner = new Agent({ name: "Planner", role: agentRoles.PLANNER, model: "gpt-3.5-turbo-0125" });
-  const engineer = new Agent({ name: "Software Engineer", role: agentRoles.ENGINEER, model: "gpt-3.5-turbo-0125" });
-  const reviewer = new Agent({ name: "Code Reviewer", role: agentRoles.REVIEWER, model: "gpt-3.5-turbo-0125" });
+  const planner = new Agent({ name: "Planner", role: agentRoles.PLANNER, model });
+  const engineer = new Agent({ name: "Software Engineer", role: agentRoles.ENGINEER, model });
+  const reviewer = new Agent({ name: "Code Reviewer", role: agentRoles.REVIEWER, model });
 
   /**
    * Tasks
@@ -72,7 +72,8 @@ async function submitMessage(message: string, openaiKey: string) {
   // send first message
   reply.update({
     role: "assistant",
-    content: "Understood. I'm first going to go into a deep think, and come up with a plan to complete this task. Stay on standby.",
+    content:
+      "Understood. I'm first going to go into a deep think, and come up with a plan to complete this task. Stay on standby.",
   });
 
   const crew = new Crew({
@@ -121,8 +122,7 @@ const initialUIState: {
 }[] = [
   {
     role: "assistant",
-    content:
-      `Hey! I'm Cody, a Software Engineering Intern built by Montelo. I'm like GPT-4 or Opus, but better.\n\nTry asking me to refactor some code, help with designing a new feature, or optimizing a database query. I'm here to help!`,
+    content: `Hey! I'm Cody, a Software Engineering Intern built by Montelo. I'm like GPT-4 or Opus, but better.\n\nTry asking me to refactor some code, help with designing a new feature, or optimizing a database query. I'm here to help!`,
   },
 ];
 
