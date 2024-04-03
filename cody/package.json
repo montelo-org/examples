@@ -12,6 +12,7 @@
     "@uidotdev/usehooks": "^2.4.1",
     "ai": "latest",
     "dirty-json": "^0.9.2",
+    "lucide-react": "^0.364.0",
     "montelo": "^1.1.85",
     "next": "14.1.1",
     "openai": "4.29.0",

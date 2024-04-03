@@ -41,34 +41,39 @@ export default function Page() {
     for await (const v of streamableValue) {
       console.log(v);
       if (!v) return;
-      setMessages((currentMessages) => [
-        ...currentMessages,
-        v,
-      ]);
+      setMessages((currentMessages) => [...currentMessages, v]);
     }
   };
 
   return (
     <div className={"grainy-paper w-[80%] h-[90%] mx-auto rounded-lg flex flex-col"}>
-      <div className={"grainy-header p-4 flex justify-between items-center rounded-t-xl border-b-[1px] border-gray-400"}>
-        <a href={"https://montelo.ai"} target={"_blank"} rel="noopener noreferrer"
-           className={"flex flex-row gap-1 items-center"}>
+      <div
+        className={"grainy-header p-4 flex justify-between items-center rounded-t-xl border-b-[1px] border-gray-400"}
+      >
+        <a
+          href={"https://montelo.ai"}
+          target={"_blank"}
+          rel="noopener noreferrer"
+          className={"flex flex-row gap-1 items-center"}
+        >
           <img src={"/MonteloLogo.svg"} alt={"MonteloAI Logo"} className={"h-6"} />
           <p>MonteloAI</p>
         </a>
         <p>Cody</p>
         <div className={"flex gap-2"}>
           {/*<HistoryIcon className={"cursor-pointer hover:text-gray-500"} />*/}
-          <div className={"flex flex-row gap-1 cursor-pointer hover:text-gray-500 items-center"}
-               onClick={setApiKeysState}>
+          <div
+            className={"flex flex-row gap-1 cursor-pointer hover:text-gray-500 items-center"}
+            onClick={setApiKeysState}
+          >
             {localKey === "" ? <p className={"text-sm italic"}>Set API Key First</p> : null}
             <Key />
           </div>
         </div>
       </div>
-      <div className={"grid grid-cols-2 h-[100%]"}>
+      <div className={"flex h-full overflow-auto"}>
         <textarea
-          className="p-4 bg-opacity-80 bg-gray-200 focus:outline-none focus:border-transparent resize-none rounded-bl-xl"
+          className="flex-1 max-w-[50%] p-4 bg-opacity-80 bg-gray-200 focus:outline-none focus:border-transparent rounded-bl-xl"
           value={inputMessage}
           placeholder="Ask Cody anything..."
           onChange={(event) => setInputMessage(event.target.value)}
@@ -79,7 +84,7 @@ export default function Page() {
             }
           }}
         />
-        <div className={"p-4 h-[94%] overflow-auto"} suppressHydrationWarning={true}>
+        <div className={"p-4 h-full max-w-[50%] overflow-auto flex-1"} suppressHydrationWarning={true}>
           {StateMap[appState]}
         </div>
       </div>
