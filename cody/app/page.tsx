@@ -17,6 +17,8 @@ function Page() {
   const [isChatting, setIsChatting] = useState<boolean>(false);
   const [selectedModel, setSelectedModel] = useState<string>("gpt-3.5-turbo-0125");
 
+  const timeout = selectedModel === "gpt-3.5-turbo-0125" ? 10000 : 20000;
+
   const [appState, setAppState] = useState<"main" | "apikeys">("main");
   const setMainState = () => setAppState("main");
   const setApiKeysState = () => setAppState("apikeys");
@@ -24,7 +26,7 @@ function Page() {
   const isTextAreaDisabled = localKey === "" || isChatting;
 
   const StateMap: Record<string, JSX.Element> = {
-    main: <MainState />,
+    main: <MainState isChatting={isChatting} timeout={timeout} />,
     apikeys: <ApiKeysState onBack={setMainState} />,
   };
 
@@ -42,8 +44,28 @@ function Page() {
     const responseStream = await submitMessage({ message: inputMessage, openaiKey: localKey, model: selectedModel });
     const streamableValue = readStreamableValue(responseStream);
 
+    const messagesArr = [
+      {
+        role: "assistant" as const,
+        content:
+          "Understood. I'm first going to go into a deep think, and come up with a plan to complete this task.",
+      },
+      {
+        role: "assistant" as const,
+        content: "Now that I have a plan, I'm going to write the code to complete the task.",
+      },
+      {
+        role: "assistant" as const,
+        content: "I'm going to double-check the code to make sure it all looks okay.",
+      },
+    ];
+
+    for (const message of messagesArr) {
+      setMessages((currentMessages) => [...currentMessages, message]);
+      await new Promise((resolve) => setTimeout(resolve, timeout));
+    }
+
     for await (const v of streamableValue) {
-      console.log(v);
       if (!v) return;
       setMessages((currentMessages) => [...currentMessages, v]);
     }
@@ -51,7 +73,7 @@ function Page() {
   };
 
   return (
-    <div className={"grainy-paper w-[80%] h-[90%] mx-auto rounded-lg flex flex-col"}>
+    <div className={"grainy-paper w-[90%] h-[90%] mx-auto rounded-lg flex flex-col"}>
       <div className={"grainy-header w-full p-4 grid grid-cols-3 rounded-t-xl border-b-[1px] border-gray-400"}>
         <a
           href={"https://montelo.ai"}
@@ -98,7 +120,8 @@ function Page() {
           }}
           disabled={isTextAreaDisabled}
         />
-        <div className={"px-2 py-4 h-full max-w-full sm:max-w-[50%] overflow-auto flex-1"} suppressHydrationWarning={true}>
+        <div className={"px-2 py-4 h-full max-w-full sm:max-w-[50%] overflow-auto flex-1"}
+             suppressHydrationWarning={true}>
           {StateMap[appState]}
         </div>
       </div>

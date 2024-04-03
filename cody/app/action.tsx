@@ -69,36 +69,11 @@ async function submitMessage({ message, openaiKey, model }: { message: string; o
     allowDelegation: false,
   });
 
-  // send first message
-  reply.update({
-    role: "assistant",
-    content:
-      "Understood. I'm first going to go into a deep think, and come up with a plan to complete this task. Stay on standby.",
-  });
-
   const crew = new Crew({
     name: "Cody The Intern",
     agents: [planner, engineer, reviewer],
     tasks: [planTask, codeTask, reviewTask, finalAnswerTask],
     process: "sequential",
-    stepCallback: async (output: string, agentName) => {
-      // reply.update({
-      //   role: "assistant",
-      //   content: output,
-      // });
-
-      if (agentName === "Software Engineer") {
-        reply.update({
-          role: "assistant",
-          content: "Now that I have a plan, I'm going to write the code to complete the task. Stay tuned!",
-        });
-      } else if (agentName === "Code Reviewer") {
-        reply.update({
-          role: "assistant",
-          content: "I'm going to double-check the code to make sure it meets the user's requirements. Hang tight!",
-        });
-      }
-    },
   });
 
   void crew.start({ monteloClient: montelo, promptInputs: { userRequirements: message } }).then((result) => {
