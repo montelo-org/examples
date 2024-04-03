@@ -81,18 +81,15 @@ async function submitMessage({ message, openaiKey, model }: { message: string; o
     agents: [planner, engineer, reviewer],
     tasks: [planTask, codeTask, reviewTask, finalAnswerTask],
     process: "sequential",
-    stepCallback: async (output: string, agentName) => {
-      // reply.update({
-      //   role: "assistant",
-      //   content: output,
-      // });
+    eventCallback: async ({ task, agent, event }) => {
+      if (["PROCESSING_STEP", "ERROR"].includes(event)) return;
 
-      if (agentName === "Software Engineer") {
+      if (agent === "Software Engineer" && task === "Coding") {
         reply.update({
           role: "assistant",
           content: "Now that I have a plan, I'm going to write the code to complete the task. Stay tuned!",
         });
-      } else if (agentName === "Code Reviewer") {
+      } else if (agent === "Code Reviewer") {
         reply.update({
           role: "assistant",
           content: "I'm going to double-check the code to make sure it meets the user's requirements. Hang tight!",
