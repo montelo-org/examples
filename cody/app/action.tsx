@@ -17,32 +17,62 @@ async function submitMessage(message: string, openaiKey: string) {
     content: string;
   }>();
 
+  const agentRoles = {
+    PLANNER:
+      "You're an expert code planner. Read the following user requirements carefully and reply with a clear and detailed step-by-step plan for your coworkers to complete the task with every point addressed. No yapping",
+    ENGINEER:
+      "You're a senior software engineer who takes a user's requirements, a step-by-step plan and will respond with the code needed to complete the task. Make sure to address every point in the plan. No yapping",
+    REVIEWER:
+      "You're a meticulous code reviewer. Review the code below and provide feedback on whether or not that user's requirements have been met. No yapping",
+  };
+
   /**
    * Agents
    */
-  const codyAgent = new Agent({
-    name: "Cody",
-    role: "You are Cody. You are an expert programmer.",
-    model: "gpt-3.5-turbo",
-  });
+  const planner = new Agent({ name: "Planner", role: agentRoles.PLANNER, model: "gpt-4-0125-preview" });
+  const engineer = new Agent({ name: "Software Engineer", role: agentRoles.ENGINEER, model: "gpt-4-0125-preview" });
+  const reviewer = new Agent({ name: "Code Reviewer", role: agentRoles.REVIEWER, model: "gpt-4-0125-preview" });
 
   /**
    * Tasks
    */
-  const codeWriter = new Task({
-    name: "Write Code",
-    description: "Write the code for the given message: {message}",
-    expectedOutput: "A proper code.",
-    agent: codyAgent,
+  const planTask = new Task({
+    name: "Planning",
+    description:
+      "Look at the user requirements and provide a step-by-step plan for your coworkers to complete the task. User Requirements:\n{userRequirements}",
+    expectedOutput: "A step-by-step plan for your coworkers to complete the task.",
+    agent: planner,
+    allowDelegation: true,
+  });
+  const codeTask = new Task({
+    name: "Coding",
+    description:
+      "Take the user requirements and the plan provided and write the code needed to complete the task. User Requirements:\n{userRequirements}",
+    expectedOutput: "The code needed to complete the task.",
+    agent: engineer,
+    allowDelegation: true,
+  });
+  const reviewTask = new Task({
+    name: "Code Review",
+    description:
+      "Review the code provided and provide feedback on whether the user's requirements have been met. If they haven't been met, provide suggestions for improvement. User Requirements:\n{userRequirements}",
+    expectedOutput: "Feedback on whether the user's requirements have been met.",
+    agent: reviewer,
+    allowDelegation: true,
+  });
+  const finalAnswerTask = new Task({
+    name: "Final Answer",
+    description:
+      "Provide the FULL final answer/code to the user based on the feedback provided. MAKE SURE TO RESPOND WITH THE FULL CODE!",
+    expectedOutput: "The FULL final answer/code to the user.",
+    agent: engineer,
+    allowDelegation: false,
   });
 
-  /**
-   * Crew
-   */
   const crew = new Crew({
-    name: "Cody Crew",
-    agents: [codyAgent],
-    tasks: [codeWriter],
+    name: "Cody The Intern",
+    agents: [planner, engineer, reviewer],
+    tasks: [planTask, codeTask, reviewTask, finalAnswerTask],
     process: "sequential",
     stepCallback: async (output: string, agentName?: string) => {
       reply.update({
@@ -52,7 +82,7 @@ async function submitMessage(message: string, openaiKey: string) {
     },
   });
 
-  crew.start({ monteloClient: montelo, promptInputs: { message } }).then((result) => {
+  crew.start({ monteloClient: montelo, promptInputs: { userRequirements: message } }).then((result: any) => {
     reply.done({
       role: "assistant",
       content: result.result,
