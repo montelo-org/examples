@@ -74,7 +74,7 @@ const initialUIState: {
   {
     role: "assistant",
     content:
-      "Hey! I'm Cody, a Software Engineering Intern built by Montelo. I'm like GPT-4 or Opus, but better. Try asking me to refactor some code, help with designing a new feature, or optimizing a database query. I'm here to help!",
+      `Hey! I'm Cody, a Software Engineering Intern built by Montelo. I'm like GPT-4 or Opus, but better.\n\nTry asking me to refactor some code, help with designing a new feature, or optimizing a database query. I'm here to help!`,
   },
 ];
 

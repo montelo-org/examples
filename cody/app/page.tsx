@@ -21,7 +21,7 @@ export default function Page() {
   };
 
   return (
-    <div className={"grainy-paper w-[50%] h-[95%] mx-auto rounded-lg"}>
+    <div className={"grainy-paper w-[65%] h-[95%] mx-auto rounded-lg"}>
       <div className={"bg-gray-200 bg-opacity-80 p-4 flex justify-between items-center rounded-t-xl mb-2"}>
         <a href={"https://montelo.ai"} target={"_blank"} rel="noopener noreferrer" className={"flex flex-row gap-1 items-center"}>
           <img src={"/MonteloLogo.svg"} alt={"MonteloAI Logo"} className={"h-6"} />
