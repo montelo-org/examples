@@ -102,7 +102,7 @@ async function submitMessage({ message, openaiKey, model }: { message: string; o
   });
 
   void crew.start({ monteloClient: montelo, promptInputs: { userRequirements: message } }).then((result) => {
-    reply.update({
+    reply.done({
       role: "assistant",
       content: result.result,
     });
