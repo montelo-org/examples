@@ -14,6 +14,7 @@ export const ApiKeysState: FC<{ onBack: () => void }> = ({ onBack }) => {
     if (inputRef.current) {
       setLocalValue(inputValue);
       inputRef.current.blur();
+      onBack();
     }
   };
 

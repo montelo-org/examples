@@ -14,8 +14,8 @@ export const MainState = () => {
   const [messages] = useUIState<typeof AI>();
 
   const IconMap: Record<string, ReactNode> = {
-    assistant: <Bot color="blue" />,
-    user: <User color="blue" />,
+    assistant: <Bot />,
+    user: <User />,
   };
 
   const Markdown: FC<{ children: string }> = ({ children }) => {

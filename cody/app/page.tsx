@@ -13,12 +13,13 @@ export default function Page() {
   const { submitMessage } = useActions<typeof AI>();
   const [_messages, setMessages] = useUIState<typeof AI>();
   const [inputMessage, setInputMessage] = useState<string>("");
+  const [isChatting, setIsChatting] = useState<boolean>(false);
 
   const [appState, setAppState] = useState<"main" | "apikeys">("main");
-
   const setMainState = () => setAppState("main");
-
   const setApiKeysState = () => setAppState("apikeys");
+
+  const isTextAreaDisabled = localKey === "" || isChatting;
 
   const StateMap: Record<string, JSX.Element> = {
     main: <MainState />,
@@ -26,6 +27,7 @@ export default function Page() {
   };
 
   const handleSubmit = async () => {
+    setIsChatting(true);
     setInputMessage("");
     setMessages((currentMessages) => [
       ...currentMessages,
@@ -43,6 +45,7 @@ export default function Page() {
       if (!v) return;
       setMessages((currentMessages) => [...currentMessages, v]);
     }
+    setIsChatting(false);
   };
 
   return (
@@ -81,6 +84,7 @@ export default function Page() {
               void handleSubmit();
             }
           }}
+          disabled={isTextAreaDisabled}
         />
         <div className={"p-4 h-full max-w-full sm:max-w-[50%] overflow-auto flex-1"} suppressHydrationWarning={true}>
           {StateMap[appState]}
