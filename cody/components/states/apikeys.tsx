@@ -24,7 +24,7 @@ export const ApiKeysState: FC<{ onBack: () => void }> = ({ onBack }) => {
   }, []);
 
   return (
-    <div className="flex flex-col w-[80%] mx-auto h-full gap-4">
+    <div className="flex flex-col w-[85%] mx-auto h-full gap-4">
       <a onClick={onBack} className={"w-fit cursor-pointer hover:text-gray-500"}>
         Back
       </a>
@@ -35,7 +35,7 @@ export const ApiKeysState: FC<{ onBack: () => void }> = ({ onBack }) => {
         onSubmit={handleSubmit}>
         <input
           ref={inputRef}
-          className="border-gray-300 rounded-lg shadow-xl w-full p-4 bg-opacity-80 bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:border-transparent transition-colors duration-200 ease-in-out"
+          className="text-sm border-gray-300 rounded-lg shadow-xl w-full p-4 bg-opacity-80 bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:border-transparent transition-colors duration-200 ease-in-out"
           value={inputValue}
           placeholder="sk-..."
           onChange={(e) => setInputValue(e.target.value)}

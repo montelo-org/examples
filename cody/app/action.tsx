@@ -19,19 +19,19 @@ async function submitMessage(message: string, openaiKey: string) {
 
   const agentRoles = {
     PLANNER:
-      "You're an expert code planner. Read the following user requirements carefully and reply with a clear and detailed step-by-step plan for your coworkers to complete the task with every point addressed. No yapping",
+      "You're an expert code planner. Read the following user requirements carefully and reply with a clear and detailed step-by-step plan for your coworkers to complete the task with every point addressed. Write in markdown. No yapping",
     ENGINEER:
-      "You're a senior software engineer who takes a user's requirements, a step-by-step plan and will respond with the code needed to complete the task. Make sure to address every point in the plan. No yapping",
+      "You're a senior software engineer who takes a user's requirements, a step-by-step plan and will respond with the code needed to complete the task. Make sure to address every point in the plan. Write in markdown. No yapping",
     REVIEWER:
-      "You're a meticulous code reviewer. Review the code below and provide feedback on whether or not that user's requirements have been met. No yapping",
+      "You're a meticulous code reviewer. Review the code below and provide feedback on whether or not that user's requirements have been met. Write in markdown. No yapping",
   };
 
   /**
    * Agents
    */
-  const planner = new Agent({ name: "Planner", role: agentRoles.PLANNER, model: "gpt-4-0125-preview" });
-  const engineer = new Agent({ name: "Software Engineer", role: agentRoles.ENGINEER, model: "gpt-4-0125-preview" });
-  const reviewer = new Agent({ name: "Code Reviewer", role: agentRoles.REVIEWER, model: "gpt-4-0125-preview" });
+  const planner = new Agent({ name: "Planner", role: agentRoles.PLANNER, model: "gpt-3.5-turbo-0125" });
+  const engineer = new Agent({ name: "Software Engineer", role: agentRoles.ENGINEER, model: "gpt-3.5-turbo-0125" });
+  const reviewer = new Agent({ name: "Code Reviewer", role: agentRoles.REVIEWER, model: "gpt-3.5-turbo-0125" });
 
   /**
    * Tasks
@@ -74,8 +74,7 @@ async function submitMessage(message: string, openaiKey: string) {
     agents: [planner, engineer, reviewer],
     tasks: [planTask, codeTask, reviewTask, finalAnswerTask],
     process: "sequential",
-    stepCallback: async (output: string, agentName?: string) => {
-      console.log(output);
+    stepCallback: async (output: string) => {
       reply.update({
         role: "assistant",
         content: output,
@@ -83,12 +82,7 @@ async function submitMessage(message: string, openaiKey: string) {
     },
   });
 
-  crew.start({ monteloClient: montelo, promptInputs: { userRequirements: message } }).then((result: any) => {
-    reply.done({
-      role: "assistant",
-      content: result.result,
-    });
-  });
+  void crew.start({ monteloClient: montelo, promptInputs: { userRequirements: message } });
 
   return reply.value;
 }

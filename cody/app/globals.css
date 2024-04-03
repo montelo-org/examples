@@ -26,6 +26,13 @@ html {
     background-attachment: fixed;
 }
 
+.grainy-header {
+    background-image: url("./grainy-background.png");
+    background-color: #13165c;
+    background-attachment: fixed;
+    color: #f0f0f0;
+}
+
 .grainy-paper {
     background-image: url("./grainy-background.png");
     background-color: rgb(252, 130, 121);
