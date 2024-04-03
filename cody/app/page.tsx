@@ -7,8 +7,9 @@ import { ApiKeysState } from "@/components/states/apikeys";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { readStreamableValue, useActions, useUIState } from "ai/rsc";
 import type { AI } from "@/app/action";
+import dynamic from "next/dynamic";
 
-export default function Page() {
+function Page() {
   const [localKey] = useLocalStorage<string>("openai-api-key", "");
   const { submitMessage } = useActions<typeof AI>();
   const [_messages, setMessages] = useUIState<typeof AI>();
@@ -104,3 +105,7 @@ export default function Page() {
     </div>
   );
 }
+
+export default dynamic(() => Promise.resolve(Page), {
+  ssr: false,
+});
