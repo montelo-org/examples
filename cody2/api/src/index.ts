@@ -5,6 +5,7 @@ import http from "http";
 import { Server } from "socket.io";
 import { handleMessage } from "./handleMessage";
 
+const PORT = process.env.port || 8080;
 const app = express();
 app.use(cors());
 
@@ -19,6 +20,6 @@ io.on("connection", (socket) => {
   socket.on("message", (data) => handleMessage({ socket, data }));
 });
 
-server.listen(8000, () => {
-  console.log("Server listening on port 8000");
+server.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
 });
