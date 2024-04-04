@@ -1,11 +1,18 @@
 import { Agent, Crew, Montelo, Task } from "montelo";
+import { Socket } from "socket.io";
+import { eventMessages } from "./constants";
 
 type Params = {
-  message: string;
-  openaiKey: string;
-  model: string;
+  data: {
+    message: string;
+    openaiKey: string;
+    model: string;
+  };
+  socket: Socket;
 };
-export const handleMessage = async ({ message, openaiKey, model }: Params) => {
+export const handleMessage = async ({ socket, data }: Params) => {
+  const { message, openaiKey, model } = data;
+
   const montelo = new Montelo({
     openai: {
       apiKey: openaiKey,
@@ -83,30 +90,28 @@ export const handleMessage = async ({ message, openaiKey, model }: Params) => {
     agents: [planner, engineer, reviewer],
     tasks: [planTask, codeTask, reviewTask, finalAnswerTask],
     process: "sequential",
-    verbose: true,
-  });
+    eventCallback: ({ event, task }) => {
+      if (event !== "START_TASK") return;
 
-  /**
-   const messagesArr = [
-      {
-        role: 'assistant' as const,
-        content: "Understood. I'm first going to go into a deep think, and come up with a plan to complete this task.",
-      },
-      {
-        role: 'assistant' as const,
-        content: "Now that I have a plan, I'm going to write the code to complete the task.",
-      },
-      {
-        role: 'assistant' as const,
-        content: "I'm going to double-check the code to make sure it all looks okay.",
-      },
-    ];
-   */
+      switch (task) {
+        case planTask.name:
+          socket.emit("response", eventMessages.startedPlanning);
+          break;
+        case codeTask.name:
+          socket.emit("response", eventMessages.startedCoding);
+          break;
+        case reviewTask.name:
+          socket.emit("response", eventMessages.startedReviewing);
+          break;
+      }
+    },
+  });
 
   const result = await crew.start({
     monteloClient: montelo,
     promptInputs: { userRequirements: message },
   });
 
+  socket.emit("response", { role: "assistant", content: result.result });
   return result.result;
 };

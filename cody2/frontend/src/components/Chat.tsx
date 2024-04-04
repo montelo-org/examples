@@ -6,7 +6,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { ChatMessage } from '../types';
 
-export const Chat: FC<{ isChatting: boolean; messages: ChatMessage[] }> = ({ isChatting, messages }) => {
+export const Chat: FC<{ messages: ChatMessage[] }> = ({ messages }) => {
   const [copiedText, copyToClipboard] = useCopyToClipboard();
 
   const IconMap: Record<string, ReactNode> = {

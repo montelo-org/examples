@@ -1,9 +1,10 @@
 import { useLocalStorage } from '@uidotdev/usehooks';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { ApiKeys } from './components/ApiKeys';
 import { Chat } from './components/Chat';
 import Header from './components/Header';
 import { ChatMessage } from './types';
+import { SocketContext } from './contexts/SocketContext';
 
 const DEFAULT_MESSAGE = {
   role: 'assistant',
@@ -16,6 +17,7 @@ export default function App() {
   const [inputMessage, setInputMessage] = useState<string>('');
   const [isChatting, setIsChatting] = useState<boolean>(false);
   const [selectedModel, setSelectedModel] = useState<string>('gpt-3.5-turbo-0125');
+  const { socket, socketEmit } = useContext(SocketContext);
 
   const [appState, setAppState] = useState<'chat' | 'apikeys'>('chat');
   const showChatView = () => setAppState('chat');
@@ -24,7 +26,7 @@ export default function App() {
   const isTextAreaDisabled = localKey === '' || isChatting;
 
   const StateMap: Record<string, JSX.Element> = {
-    chat: <Chat isChatting={isChatting} messages={messages} />,
+    chat: <Chat messages={messages} />,
     apikeys: <ApiKeys onBack={showChatView} />,
   };
 
@@ -39,17 +41,21 @@ export default function App() {
       },
     ]);
 
-    // for (const message of messagesArr) {
-    //   setMessages((currentMessages) => [...currentMessages, message]);
-    //   await new Promise((resolve) => setTimeout(resolve, timeout));
-    // }
+    socketEmit('message', { message: inputMessage, openaiKey: localKey, model: selectedModel });
+  };
 
-    // for await (const v of streamableValue) {
-    //   if (!v) return;
-    //   setMessages((currentMessages) => [...currentMessages, v]);
-    // }
+  const handleResponse = async (message: ChatMessage) => {
+    console.log('handleResponse:', message);
+    setMessages((currentMessages) => [...currentMessages, message]);
     // setIsChatting(false);
   };
+
+  useEffect(() => {
+    socket.on('response', handleResponse);
+    return () => {
+      socket.off('response', handleResponse);
+    };
+  }, [socket]);
 
   return (
     <div className={`grainy-background w-screen h-screen flex justify-center items-center`}>

@@ -1,7 +1,9 @@
+import cors from "cors";
+import "dotenv/config";
 import express from "express";
 import http from "http";
-import cors from "cors";
 import { Server } from "socket.io";
+import { handleMessage } from "./handleMessage";
 
 const app = express();
 app.use(cors());
@@ -9,19 +11,8 @@ app.use(cors());
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*" } });
 
-//an event listener is set up for new WebSocket connections and passes a socket object that represents the connection.
 io.on("connection", (socket) => {
-  console.log("A user connected");
-
-  socket.on("message", (data) => {
-    console.log(`Received message: ${data}`);
-    //The received message is broadcasted to all connected clients using the emit() method of the io object.
-    io.emit("message", data);
-  });
-
-  socket.on("disconnect", () => {
-    console.log("A user disconnected");
-  });
+  socket.on("message", (data) => handleMessage({ socket, data }));
 });
 
 server.listen(8000, () => {
