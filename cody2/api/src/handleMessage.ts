@@ -95,13 +95,22 @@ export const handleMessage = async ({ socket, data }: Params) => {
 
       switch (task) {
         case planTask.name:
-          socket.emit("response", eventMessages.startedPlanning);
+          socket.emit("response", {
+            status: "running",
+            message: eventMessages.startedPlanning,
+          });
           break;
         case codeTask.name:
-          socket.emit("response", eventMessages.startedCoding);
+          socket.emit("response", {
+            status: "running",
+            message: eventMessages.startedCoding,
+          });
           break;
         case reviewTask.name:
-          socket.emit("response", eventMessages.startedReviewing);
+          socket.emit("response", {
+            status: "running",
+            message: eventMessages.startedReviewing,
+          });
           break;
       }
     },
@@ -112,6 +121,9 @@ export const handleMessage = async ({ socket, data }: Params) => {
     promptInputs: { userRequirements: message },
   });
 
-  socket.emit("response", { role: "assistant", content: result.result });
+  socket.emit("response", {
+    status: "done",
+    message: { role: "assistant", content: result.result },
+  });
   return result.result;
 };

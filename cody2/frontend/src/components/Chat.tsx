@@ -6,7 +6,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { ChatMessage } from '../types';
 
-export const Chat: FC<{ messages: ChatMessage[] }> = ({ messages }) => {
+export const Chat: FC<{ isChatting: boolean; messages: ChatMessage[] }> = ({ messages, isChatting }) => {
   const [copiedText, copyToClipboard] = useCopyToClipboard();
 
   const IconMap: Record<string, ReactNode> = {
@@ -91,6 +91,7 @@ export const Chat: FC<{ messages: ChatMessage[] }> = ({ messages }) => {
           {m.role === 'assistant' ? <AssistantMessage content={m.content} /> : <UserMessage content={m.content} />}
         </React.Fragment>
       ))}
+      {isChatting && <div className="flex w-full text-slate-800 pl-2">Thinking...</div>}
     </ul>
   );
 };

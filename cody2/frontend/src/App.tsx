@@ -26,7 +26,7 @@ export default function App() {
   const isTextAreaDisabled = localKey === '' || isChatting;
 
   const StateMap: Record<string, JSX.Element> = {
-    chat: <Chat messages={messages} />,
+    chat: <Chat messages={messages} isChatting={isChatting} />,
     apikeys: <ApiKeys onBack={showChatView} />,
   };
 
@@ -44,10 +44,12 @@ export default function App() {
     socketEmit('message', { message: inputMessage, openaiKey: localKey, model: selectedModel });
   };
 
-  const handleResponse = async (message: ChatMessage) => {
-    console.log('handleResponse:', message);
+  const handleResponse = async ({ message, status }: { status: string; message: ChatMessage }) => {
     setMessages((currentMessages) => [...currentMessages, message]);
-    // setIsChatting(false);
+
+    if (status === 'done') {
+      setIsChatting(false);
+    }
   };
 
   useEffect(() => {
@@ -71,7 +73,7 @@ export default function App() {
           <textarea
             className="flex-1 max-w-full sm:max-w-[50%] p-4 bg-opacity-80 bg-gray-200 focus:outline-none focus:border-transparent rounded-bl-xl"
             value={inputMessage}
-            placeholder="Ask Cody anything..."
+            placeholder={isChatting ? 'Running please wait...' : 'Ask Cody anything...'}
             onChange={(event) => setInputMessage(event.target.value)}
             autoFocus
             onKeyUp={(event) => {
