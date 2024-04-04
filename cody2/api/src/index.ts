@@ -8,6 +8,10 @@ import { handleMessage } from "./handleMessage";
 const app = express();
 app.use(cors());
 
+app.get("/health", (req, res) => {
+  res.send("OK").status(200);
+});
+
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*" } });
 
